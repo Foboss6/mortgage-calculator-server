@@ -6,25 +6,25 @@ const PORT = process.env.PORT;
 
 // ****** DATABASE section *************************
 // Its for fix poblem with using free Heroku database 
-//  process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+ process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
-// const db = knex({
-//   client: 'pg',
-//   connection: {
-//     connectionString: process.env.DATABASE_URL,
-//     ssl: true,
-//   }
-// });
 const db = knex({
   client: 'pg',
   connection: {
-    host : '127.0.0.1',
-    port : 5432,
-    user : 'postgres',
-    password : '123',
-    database : 'banksbase'
+    connectionString: process.env.DATABASE_URL,
+    ssl: true,
   }
 });
+// const db = knex({
+//   client: 'pg',
+//   connection: {
+//     host : '127.0.0.1',
+//     port : 5432,
+//     user : 'postgres',
+//     password : '123',
+//     database : 'banksbase'
+//   }
+// });
 // *************************************************
 
 const app = express();
@@ -164,6 +164,6 @@ app.get('/mortgage-calculator/:bankname', (req, res) => {
 });
 // *************************************************
 
-app.listen(3001, () => {
+app.listen(PORT, () => {
   console.log(`Server is running`);
 });
