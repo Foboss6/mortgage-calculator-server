@@ -164,6 +164,47 @@ app.get('/mortgage-calculator/:bankname', (req, res) => {
 });
 // *************************************************
 
+
+// ******* /mortgage-calculator/history/:bankname (GET bank's history by name) **********
+app.get('/mortgage-calculator/history/:bankname', (req, res) => {
+  const { bankname } = req.params;
+  if(bankname) {
+    db('bankshistory')
+    .where({bankname})
+    .select('*')
+    .then((history) => res.status(200).json(history))
+    .catch(err => res.status(400).json('No history for this bank'));
+  } else res.status(400).json('invalid :bankname parameter');
+});
+// **************************************************************************************
+
+// ******* /mortgage-calculator/history (POST bank's history to database) **********
+app.post('/mortgage-calculator/history', (req, res) => {
+  const { bankname, initialloan, downpayment } = req.body;
+  if( !bankname && !initialloan && !downpayment) return res.status(400).json('invalid history data');
+  
+  db('bankshistory')
+  .returning('*')
+  .insert({bankname, initialloan, downpayment})
+  .then(data => res.status(200).json(data[0]))
+  .catch(err => res.status(400).json('Bank\'s history database error, cannot add data'));
+
+  db('bankshistory')
+  .where({bankname})
+  .select('*')
+  .then((history) => {
+    if(history.length > 10) {
+      let ids = history.map(({id}) => id);
+      db('bankshistory')
+      .where({id: Math.min(...ids)})
+      .del()
+      .catch(console.log)
+    }
+  })
+  .catch(console.log);
+});
+// **************************************************************************************
+
 app.listen(PORT, () => {
   console.log(`Server is running`);
 });
