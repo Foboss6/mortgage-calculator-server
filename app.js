@@ -180,6 +180,7 @@ app.get('/mortgage-calculator/history/:bankname', (req, res) => {
 
 // ******* /mortgage-calculator/history (POST bank's history to database) **********
 app.post('/mortgage-calculator/history', (req, res) => {
+  
   const { bankname, initialloan, downpayment } = req.body;
   if( !bankname && !initialloan && !downpayment) return res.status(400).json('invalid history data');
   
